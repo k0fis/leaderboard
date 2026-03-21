@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>KFS Games - Leaderboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>KFS Games Leaderboard</h1>
+    <div class="games-grid">
+        <div th:each="game : ${games}" class="game-card">
+            <a th:href="@{/leaderboard/{id}(id=${game.gameId()})}">
+                <h2 th:text="${game.displayName()}">Game</h2>
+                <p class="top-score" th:if="${game.topScore() != null}">
+                    Top: <span th:text="${game.topScore()}">0</span>
+                </p>
+                <p class="top-score" th:if="${game.topScore() == null}">No scores yet</p>
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

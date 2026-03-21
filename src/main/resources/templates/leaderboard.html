@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${gameName} + ' - Leaderboard'">Leaderboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <a href="/" class="back-link">&larr; All Games</a>
+    <h1 th:text="${gameName}">Game</h1>
+    <table class="score-table" th:if="${!scores.isEmpty()}">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Player</th>
+            <th>Score</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry, iter : ${scores}">
+            <td th:text="${iter.index + 1}">1</td>
+            <td th:text="${entry.playerName}">AAA</td>
+            <td th:text="${entry.score}">0</td>
+            <td th:text="${entry.formattedDate}">01.01.2025</td>
+        </tr>
+        </tbody>
+    </table>
+    <p th:if="${scores.isEmpty()}" class="empty">No scores yet. Be the first!</p>
+</div>
+</body>
+</html>

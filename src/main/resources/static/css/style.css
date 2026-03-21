@@ -1,0 +1,110 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: #0a0a1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+h1 {
+    text-align: center;
+    color: #ffcc00;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.back-link {
+    display: inline-block;
+    color: #888;
+    text-decoration: none;
+    margin-bottom: 1rem;
+}
+
+.back-link:hover {
+    color: #ffcc00;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.game-card {
+    background: #1a1a2e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+}
+
+.game-card:hover {
+    border-color: #ffcc00;
+}
+
+.game-card a {
+    display: block;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.game-card h2 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.top-score {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.top-score span {
+    color: #ffcc00;
+    font-weight: bold;
+}
+
+.score-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.score-table th,
+.score-table td {
+    padding: 0.6rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #222;
+}
+
+.score-table th {
+    color: #ffcc00;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.score-table tr:nth-child(1) td { color: #ffd700; }
+.score-table tr:nth-child(2) td { color: #c0c0c0; }
+.score-table tr:nth-child(3) td { color: #cd7f32; }
+
+.score-table tr:hover td {
+    background: #1a1a2e;
+}
+
+.empty {
+    text-align: center;
+    color: #666;
+    padding: 3rem 0;
+}
