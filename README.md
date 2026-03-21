@@ -296,3 +296,110 @@ Hráč umře → GameOverScreen(score)
 
 - `http://server:8080/` - přehled všech her s top score
 - `http://server:8080/leaderboard/{gameId}` - žebříček konkrétní hry
+
+---
+
+## Apache reverse proxy
+
+Spring Boot běží na localhostu (např. port 8080). Apache přesměruje
+veřejnou URL na tento port.
+
+### Povolit moduly
+
+```bash
+a2enmod proxy proxy_http headers
+systemctl restart apache2       # nebo: service apache2 restart
+```
+
+### Varianta A: na subdoméně (např. `scores.kofis.eu`)
+
+```apache
+<VirtualHost *:80>
+    ServerName scores.kofis.eu
+
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:8080/
+    ProxyPassReverse / http://localhost:8080/
+
+    # CORS - pokud hry běží na jiné doméně
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type"
+</VirtualHost>
+```
+
+### Varianta B: na cestě (např. `kofis.eu/scores/`)
+
+```apache
+<VirtualHost *:80>
+    ServerName kofis.eu
+
+    # ... existující konfigurace ...
+
+    ProxyPreserveHost On
+    ProxyPass /scores/ http://localhost:8080/
+    ProxyPassReverse /scores/ http://localhost:8080/
+
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type"
+</VirtualHost>
+```
+
+**Pozor:** při variantě B je potřeba v Spring Boot nastavit context path
+v `application.yml`:
+
+```yaml
+server:
+  servlet:
+    context-path: /scores
+```
+
+Nebo spouštět s parametrem:
+
+```bash
+./kfs-leaderboard.sh -p 8080 start
+# JAR se spustí s --server.port=8080, context-path se řeší v application.yml
+```
+
+### Varianta C: s HTTPS (Let's Encrypt)
+
+```apache
+<VirtualHost *:443>
+    ServerName scores.kofis.eu
+
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/scores.kofis.eu/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/scores.kofis.eu/privkey.pem
+
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:8080/
+    ProxyPassReverse / http://localhost:8080/
+</VirtualHost>
+
+# Redirect HTTP → HTTPS
+<VirtualHost *:80>
+    ServerName scores.kofis.eu
+    Redirect permanent / https://scores.kofis.eu/
+</VirtualHost>
+```
+
+Certifikát přes:
+
+```bash
+certbot --apache -d scores.kofis.eu
+```
+
+### Po změně Apache konfigurace
+
+```bash
+apachectl configtest        # ověřit syntax
+service apache2 reload      # načíst změny
+```
+
+### Ověření
+
+```bash
+curl https://scores.kofis.eu/api/health
+# { "status": "UP", "uptime": "...", "totalScores": ... }
+```
