@@ -31,7 +31,17 @@ shift $((OPTIND - 1))
 
 PID_FILE="$SCRIPT_DIR/leaderboard.pid"
 WATCHDOG_PID_FILE="$SCRIPT_DIR/watchdog.pid"
+PORT_FILE="$SCRIPT_DIR/leaderboard.port"
 LOG_FILE="$SCRIPT_DIR/leaderboard.log"
+
+# Pokud nebyl zadán -p a existuje uložený port, použij ho
+if [ "$PORT" = "8080" ] && [ -f "$PORT_FILE" ]; then
+  SAVED_PORT=$(cat "$PORT_FILE")
+  if [ -n "$SAVED_PORT" ]; then
+    PORT="$SAVED_PORT"
+  fi
+fi
+
 HEALTH_URL="http://localhost:$PORT/api/health"
 CHECK_INTERVAL=60       # kontola kazdych 60s
 STARTUP_WAIT=15         # po startu cekat 15s nez zacne kontrolovat
@@ -61,6 +71,7 @@ start_server() {
     echo "Spouštím server..."
     nohup java -jar "$JAR" --server.port="$PORT" >> "$LOG_FILE" 2>&1 &
     echo $! > "$PID_FILE"
+    echo "$PORT" > "$PORT_FILE"
     echo "Server spuštěn (PID $!, port $PORT)"
 }
 
