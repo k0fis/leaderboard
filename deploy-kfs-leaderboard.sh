@@ -49,7 +49,7 @@ echo "    Staženo: $(du -h "$INSTALL_DIR/$JAR_NAME.new" | cut -f1)"
 
 # --- 3. Stáhnout launcher ---
 
-LAUNCHER_URL=$(echo "$RELEASE_JSON" | grep "browser_download_url.*$LAUNCHER" | head -1 | cut -d '"' -f 4)
+LAUNCHER_URL=$(echo "$RELEASE_JSON" | grep "browser_download_url.*/kfs-leaderboard\.sh\"" | head -1 | cut -d '"' -f 4)
 
 if [ -n "$LAUNCHER_URL" ]; then
   echo ">>> Stahuji $LAUNCHER ..."

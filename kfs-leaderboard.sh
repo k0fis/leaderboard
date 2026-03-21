@@ -107,7 +107,6 @@ check_health() {
 }
 
 run_watchdog() {
-    echo $$ > "$WATCHDOG_PID_FILE"
     local failures=0
 
     # Počkat na startup
@@ -172,10 +171,13 @@ case "${1:-}" in
     start)
         start_server
         echo "Spouštím watchdog..."
-        run_watchdog &
-        disown
+        nohup bash "$0" -p "$PORT" _watchdog >> "$LOG_FILE" 2>&1 &
+        echo $! > "$WATCHDOG_PID_FILE"
         echo "Watchdog spuštěn (PID $!)"
         echo "Log: tail -f $LOG_FILE"
+        ;;
+    _watchdog)
+        run_watchdog
         ;;
     stop)
         stop_watchdog
@@ -187,8 +189,8 @@ case "${1:-}" in
         sleep 2
         start_server
         echo "Spouštím watchdog..."
-        run_watchdog &
-        disown
+        nohup bash "$0" -p "$PORT" _watchdog >> "$LOG_FILE" 2>&1 &
+        echo $! > "$WATCHDOG_PID_FILE"
         echo "Watchdog spuštěn (PID $!)"
         ;;
     status)
