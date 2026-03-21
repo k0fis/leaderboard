@@ -6,21 +6,32 @@
 # Pokud server neodpovídá, restartuje ho.
 #
 # Použití:
-#   ./kfs-leaderboard.sh start     # spustí server + watchdog na pozadí
-#   ./kfs-leaderboard.sh stop      # zastaví server + watchdog
-#   ./kfs-leaderboard.sh status    # stav serveru
-#   ./kfs-leaderboard.sh restart   # restart
-#   ./kfs-leaderboard.sh log       # tail logu
+#   ./kfs-leaderboard.sh start              # spustí na portu 8080 (default)
+#   ./kfs-leaderboard.sh -p 9090 start      # spustí na portu 9090
+#   ./kfs-leaderboard.sh stop               # zastaví server + watchdog
+#   ./kfs-leaderboard.sh status             # stav serveru
+#   ./kfs-leaderboard.sh restart            # restart
+#   ./kfs-leaderboard.sh log                # tail logu
 ###############################################################################
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 JAR="$SCRIPT_DIR/kfsLeaderboard.jar"
+PORT=8080
+
+# Parse -p PORT
+while getopts "p:" opt; do
+  case $opt in
+    p) PORT="$OPTARG" ;;
+    *) echo "Použití: $0 [-p port] {start|stop|restart|status|log}"; exit 1 ;;
+  esac
+done
+shift $((OPTIND - 1))
+
 PID_FILE="$SCRIPT_DIR/leaderboard.pid"
 WATCHDOG_PID_FILE="$SCRIPT_DIR/watchdog.pid"
 LOG_FILE="$SCRIPT_DIR/leaderboard.log"
-PORT=8080
 HEALTH_URL="http://localhost:$PORT/api/health"
 CHECK_INTERVAL=60       # kontola kazdych 60s
 STARTUP_WAIT=15         # po startu cekat 15s nez zacne kontrolovat
@@ -50,7 +61,7 @@ start_server() {
     echo "Spouštím server..."
     nohup java -jar "$JAR" --server.port="$PORT" >> "$LOG_FILE" 2>&1 &
     echo $! > "$PID_FILE"
-    echo "Server spuštěn (PID $!)"
+    echo "Server spuštěn (PID $!, port $PORT)"
 }
 
 stop_server() {
@@ -133,6 +144,7 @@ run_watchdog() {
 }
 
 show_status() {
+    echo "Port:     $PORT"
     if is_running; then
         echo "Server:   BĚŽÍ (PID $(cat "$PID_FILE"))"
     else
@@ -186,7 +198,7 @@ case "${1:-}" in
         tail -f "$LOG_FILE"
         ;;
     *)
-        echo "Použití: $0 {start|stop|restart|status|log}"
+        echo "Použití: $0 [-p port] {start|stop|restart|status|log}"
         exit 1
         ;;
 esac
