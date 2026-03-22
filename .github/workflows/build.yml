@@ -43,3 +43,23 @@ jobs:
             kfs-leaderboard.sh
             deploy-kfs-leaderboard.sh
           make_latest: true
+
+      - name: Deploy to server
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p ${{ secrets.DEPLOY_PORT }} ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          DEST=${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+          SSH="ssh -i ~/.ssh/deploy_key -p ${{ secrets.DEPLOY_PORT }}"
+          SCP="scp -i ~/.ssh/deploy_key -P ${{ secrets.DEPLOY_PORT }}"
+          $SCP kfsLeaderboard.jar kfs-leaderboard.sh $DEST:/tmp/
+          $SSH $DEST '
+            cd ~/app/leaderboard &&
+            ./kfs-leaderboard.sh stop 2>/dev/null || true &&
+            cp kfsLeaderboard.jar kfsLeaderboard.jar.bak &&
+            mv /tmp/kfsLeaderboard.jar . &&
+            mv /tmp/kfs-leaderboard.sh . &&
+            chmod +x kfs-leaderboard.sh &&
+            ./kfs-leaderboard.sh start
+          '
