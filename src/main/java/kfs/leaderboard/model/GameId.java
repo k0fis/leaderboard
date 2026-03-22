@@ -11,7 +11,8 @@ public enum GameId {
     RIVER_RAID("river-raid", "River Raid"),
     BOULDER_DASH("boulder-dash", "Boulder Dash"),
     ARKANOID("arkanoid", "Arkanoid"),
-    SOKOBAN("sokoban", "Sokoban");
+    SOKOBAN("sokoban", "Sokoban"),
+    KFS_TETRIS("kfs-tetris", "Tetris");
 
     private final String id;
     private final String displayName;
