@@ -12,7 +12,8 @@ public enum GameId {
     BOULDER_DASH("boulder-dash", "Boulder Dash"),
     ARKANOID("arkanoid", "Arkanoid"),
     SOKOBAN("sokoban", "Sokoban"),
-    KFS_TETRIS("kfs-tetris", "Tetris");
+    KFS_TETRIS("kfs-tetris", "Tetris"),
+    KFS_EASTER_EGG("kfs-easter-egg", "Easter Egg");
 
     private final String id;
     private final String displayName;
