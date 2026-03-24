@@ -13,7 +13,8 @@ public enum GameId {
     ARKANOID("arkanoid", "Arkanoid"),
     SOKOBAN("sokoban", "Sokoban"),
     KFS_TETRIS("kfs-tetris", "Tetris"),
-    KFS_EASTER_EGG("kfs-easter-egg", "Easter Egg");
+    KFS_EASTER_EGG("kfs-easter-egg", "Easter Egg"),
+    KFS_TANK("kfs-tank", "KubasaurusTank");
 
     private final String id;
     private final String displayName;
