@@ -1,6 +1,7 @@
 package kfs.leaderboard;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kfs.leaderboard.model.GameId;
 import kfs.leaderboard.repository.ScoreRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,7 +231,7 @@ class LeaderboardE2eTest {
 
         mvc.perform(get("/api/scores/games"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(8)))
+            .andExpect(jsonPath("$", hasSize(GameId.values().length)))
             .andExpect(jsonPath("$[?(@.gameId == 'space-invaders')].topScore").value(5100))
             .andExpect(jsonPath("$[?(@.gameId == 'river-raid')].topScore").value(8900))
             .andExpect(jsonPath("$[?(@.gameId == 'arkanoid')].topScore").value(everyItem(nullValue())));
