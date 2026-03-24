@@ -230,7 +230,7 @@ class LeaderboardE2eTest {
 
         mvc.perform(get("/api/scores/games"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(6)))
+            .andExpect(jsonPath("$", hasSize(8)))
             .andExpect(jsonPath("$[?(@.gameId == 'space-invaders')].topScore").value(5100))
             .andExpect(jsonPath("$[?(@.gameId == 'river-raid')].topScore").value(8900))
             .andExpect(jsonPath("$[?(@.gameId == 'arkanoid')].topScore").value(everyItem(nullValue())));
